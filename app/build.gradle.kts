@@ -6,6 +6,23 @@ android {
  namespace = "com.example.campilot"
  compileSdk = 37
  defaultConfig { applicationId = "com.example.campilot"; minSdk = 28; targetSdk = 37; versionCode = 1; versionName = "0.1.0"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+ val releaseKey = rootProject.file(".signing/campilot-release.jks")
+ val releasePasswordFile = rootProject.file(".signing/password.txt")
+ if (releaseKey.exists() && releasePasswordFile.exists()) {
+  signingConfigs.create("submission") {
+   storeFile = releaseKey
+   storePassword = releasePasswordFile.readText().trim()
+   keyAlias = "campilot"
+   keyPassword = storePassword
+  }
+ }
+ buildTypes {
+  getByName("release") {
+   isDebuggable = false
+   isMinifyEnabled = false
+   signingConfig = signingConfigs.findByName("submission")
+  }
+ }
  buildFeatures { compose = true }
  compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
 }
